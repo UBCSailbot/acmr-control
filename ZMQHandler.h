@@ -6,16 +6,19 @@
 #define ACMR_CONTROL_ZMQHANDLER_H
 
 #include <zmq.h>
+#include <string>
 
 class ZMQHandler {
-    ZMQHandler();
-    void run();
-    void read();
-    void write();
+
+public:
+    ZMQHandler(char *filter);
+    std::string read();
+    void write(std::string send_str);
 
 
 private:
-    bool exitFlag;
+    zmq::context_t context;
+    zmq::socket_t pubsocket, subsocket;
 };
 
 

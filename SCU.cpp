@@ -14,34 +14,34 @@ int main() {
     char filter[] = "STEER_S GPS AW";
     ZMQHandler handler(filter);
 
-    int scheme;
+    int scheme = 0;
 
     double setpoint = 0;
     double error = 0;
     double dt;
-
+    double dt_sum = 0;
     int AWA, COG, HOG;
 
     clock_t tick = clock();
+    clock_t tick_2 = clock();
 
     // TODO fix magic numbers
     PID pid(0.2, 0.1, 0.3, 5, 70);
 
     while(true)
     {
+        std::cout << "Scheme: " << scheme << " Setpoint: " << setpoint <<std::endl;
         std::string rec_str = handler.read();
-        if(rec_str.size() > 0)
-        {
-            std::cout << rec_str << std::endl;
 
+        std::cout << rec_str << std::endl;
+        if(rec_str.size() > 0) {
 
             stringstream recstream(rec_str);
 
             std::string topic;
             recstream >> topic;
 
-            if(topic == "STEER_S")
-            {
+            if (topic == "STEER_S") {
                 int i;
 
                 recstream >> i;
@@ -50,8 +50,7 @@ int main() {
 
                 recstream >> setpoint;
             }
-            else if (topic == "GPS")
-            {
+            else if (topic == "GPS") {
                 int i;
 
                 recstream >> i;
@@ -60,8 +59,7 @@ int main() {
                 recstream >> i;
                 recstream >> COG;
             }
-            else if (topic == "AW")
-            {
+            else if (topic == "AW") {
                 int i;
                 recstream >> i;
                 recstream >> AWA;
@@ -70,12 +68,21 @@ int main() {
 
         switch(scheme)
         {
-            case SailByCOG:
+            case SailByCOG: {
+                std::cout << "Sailing by COG - ";
                 error = setpoint - COG;
-            case SailByAWA:
+                break;
+            }
+            case SailByAWA: {
+                std::cout << "Sailing by AWA - ";
                 error = setpoint - AWA;
-            case SailByHOG:
+                break;
+            }
+            case SailByHOG: {
+                std::cout << "Sailing by HOG - ";
                 error = setpoint - HOG;
+                break;
+            }
         }
 
         dt = double(clock() - tick) / CLOCKS_PER_SEC;
@@ -84,19 +91,21 @@ int main() {
 
         pid.Compute(error, dt);
 
-//        cout << "error: " << error << endl;
+        dt_sum += dt;
 
         //doStuffWithOutput(pid.output())
 
-        cout << "RUD: " << (int) pid.Output() << ", Error: " << error << endl;
+        // Need to continuously compute error but send data at a slower rate
+        if( dt_sum > 0.1 ) {
 
-        std::string send_str = "RUD " + std::to_string((int)pid.Output());
+            dt_sum = 0;
+            cout << "RUD: " << (int) pid.Output() << ", Error: " << error << endl;
 
-        cout << send_str << endl;
+            std::string send_str = "RUD " + std::to_string((int)pid.Output());
+            // cout << send_str << endl;
 
-        handler.write(send_str);
-
-
+            handler.write(send_str);
+        }
 
     }
 

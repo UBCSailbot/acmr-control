@@ -9,6 +9,8 @@
 
 using namespace std;
 
+#define PRINT_DELAY (0.5)
+
 int main() {
 
     char filter[] = "STEER_S GPS AW";
@@ -30,10 +32,16 @@ int main() {
 
     while(true)
     {
-        std::cout << "Scheme: " << scheme << " Setpoint: " << setpoint <<std::endl;
+        double secsElapsed = double(clock() - tick_2) / CLOCKS_PER_SEC;
+//        std::cout << secsElapsed << std::endl;
+        bool printed = false;
+        if(secsElapsed > PRINT_DELAY) {
+            std::cout << "Scheme: " << scheme << " Setpoint: " << setpoint;
+            printed = true;
+        }
         std::string rec_str = handler.read();
 
-        std::cout << rec_str << std::endl;
+//        std::cout << rec_str << std::endl;
         if(rec_str.size() > 0) {
 
             stringstream recstream(rec_str);
@@ -69,17 +77,23 @@ int main() {
         switch(scheme)
         {
             case SailByCOG: {
-                std::cout << "Sailing by COG - ";
+                if(secsElapsed > PRINT_DELAY) {
+                    std::cout << " - Sailing by COG";
+                }
                 error = setpoint - COG;
                 break;
             }
             case SailByAWA: {
-                std::cout << "Sailing by AWA - ";
+                if(secsElapsed > PRINT_DELAY) {
+                    std::cout << " - Sailing by AWA";
+                }
                 error = setpoint - AWA;
                 break;
             }
             case SailByHOG: {
-                std::cout << "Sailing by HOG - ";
+                if(secsElapsed > PRINT_DELAY) {
+                    std::cout << " - Sailing by HOG";
+                }
                 error = setpoint - HOG;
                 break;
             }
@@ -95,16 +109,27 @@ int main() {
 
         //doStuffWithOutput(pid.output())
 
+        if(secsElapsed > PRINT_DELAY) {
+            cout << ", RUD: " << (int) pid.Output() << ", Error: " << error;
+        }
+
         // Need to continuously compute error but send data at a slower rate
         if( dt_sum > 0.1 ) {
 
             dt_sum = 0;
-            cout << "RUD: " << (int) pid.Output() << ", Error: " << error << endl;
+
+
 
             std::string send_str = "RUD " + std::to_string((int)pid.Output());
             // cout << send_str << endl;
 
             handler.write(send_str);
+        }
+
+        if(printed)
+        {
+            tick_2 = clock();
+            cout << std::endl;
         }
 
     }

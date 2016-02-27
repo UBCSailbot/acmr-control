@@ -28,7 +28,7 @@ int main() {
     clock_t tick_2 = clock();
 
     // TODO fix magic numbers
-    PID pid(0.2, 0.1, 0.3, 5, 70);
+    PID pid(0.3, 0, 0, 10, 70);
 
     while(true)
     {

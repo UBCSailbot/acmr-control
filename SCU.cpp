@@ -22,13 +22,14 @@ int main() {
     double error = 0;
     double dt;
     double dt_sum = 0;
-    int AWA, COG, HOG;
-
+    int COG, HOG;
+    double AWS, AWA;
+    std::string test;
     clock_t tick = clock();
     clock_t tick_2 = clock();
 
     // TODO fix magic numbers
-    PID pid(0.3, 0, 0, 10, 70);
+    PID pid(0.5, 0, 0, 10, 45);
 
     while(true)
     {
@@ -45,7 +46,6 @@ int main() {
         if(rec_str.size() > 0) {
 
             stringstream recstream(rec_str);
-
             std::string topic;
             recstream >> topic;
 
@@ -53,9 +53,7 @@ int main() {
                 int i;
 
                 recstream >> i;
-
                 scheme = i;
-
                 recstream >> setpoint;
             }
             else if (topic == "GPS") {
@@ -69,7 +67,7 @@ int main() {
             }
             else if (topic == "AW") {
                 int i;
-                recstream >> i;
+                recstream >> AWS;
                 recstream >> AWA;
             }
         }
@@ -117,9 +115,6 @@ int main() {
         if( dt_sum > 0.1 ) {
 
             dt_sum = 0;
-
-
-
             std::string send_str = "RUD " + std::to_string((int)pid.Output());
             // cout << send_str << endl;
 

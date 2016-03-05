@@ -12,11 +12,12 @@ pkg_search_module(ZMQ REQUIRED libzmq)
 include_directories(${ZMQ_INCLUDE_DIRS})
 link_directories(${ZMQ_LIBRARY_DIRS})
 
-add_executable(acmr_tcu TCU.cpp ${SOURCE_FILES})
+add_executable(acmr_tcu TCU.cpp ${SOURCE_FILES} schemes.h)
 add_executable(acmr_scu SCU.cpp ${SOURCE_FILES} schemes.h)
 
 
 FIND_LIBRARY(ZMQ_LIB libzmq)
 TARGET_LINK_LIBRARIES(acmr_tcu ${ZMQ_LIBRARIES})
 TARGET_LINK_LIBRARIES(acmr_scu ${ZMQ_LIBRARIES})
+
 

@@ -22,7 +22,8 @@ int main() {
     double error = 0;
     double dt;
     double dt_sum = 0;
-    int COG, HOG;
+    int COG = 0;
+    int HOG = 0;
     double AWS, AWA;
     std::string test;
     clock_t tick = clock();
@@ -78,7 +79,7 @@ int main() {
                 if(secsElapsed > PRINT_DELAY) {
                     std::cout << " - Sailing by COG";
                 }
-                error = setpoint - COG;
+                error = COG - setpoint;
                 break;
             }
             case SailByAWA: {

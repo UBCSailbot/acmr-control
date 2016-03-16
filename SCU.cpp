@@ -3,13 +3,11 @@
 #include <unistd.h>
 #include "ZMQHandler.h"
 #include <sstream>
-#include "schemes.h"
+#include "general_defs.h"
 #include "PID.h"
 #include "ctime"
 
 using namespace std;
-
-#define PRINT_DELAY (0.5)
 
 int main() {
 
@@ -30,6 +28,7 @@ int main() {
 
     // TODO fix magic numbers
     PID pid(0.5, 0, 0, 10, 45);
+
 
     while(true)
     {
@@ -108,7 +107,7 @@ int main() {
         }
 
         // Need to continuously compute error but send data at a slower rate
-        if( dt_sum > 0.1 ) {
+        if( dt_sum > SCU_PUBLISH_PERIOD ) {
 
             dt_sum = 0;
             std::string send_str = "RUD " + std::to_string((int)pid.Output());

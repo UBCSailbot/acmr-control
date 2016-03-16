@@ -22,12 +22,13 @@ int main() {
     double error = 0;
     double dt;
     double dt_sum = 0;
-    int COG = 0;
-    int HOG = 0;
+    double COG = 0;
+    double HOG = 0;
     double AWS, AWA;
     std::string test;
     clock_t tick = clock();
     clock_t tick_2 = clock();
+    double lat, lng, sog;
 
     // TODO fix magic numbers
     PID pid(0.5, 0, 0, 10, 45);
@@ -43,9 +44,7 @@ int main() {
         }
         std::string rec_str = handler.read();
 
-//        std::cout << rec_str << std::endl;
         if(rec_str.size() > 0) {
-
             stringstream recstream(rec_str);
             std::string topic;
             recstream >> topic;
@@ -58,8 +57,7 @@ int main() {
                 recstream >> setpoint;
             }
             else if (topic == "GPS") {
-                int i;
-
+                double i;
                 recstream >> i;
                 recstream >> i;
                 recstream >> HOG;
@@ -67,7 +65,6 @@ int main() {
                 recstream >> COG;
             }
             else if (topic == "AW") {
-                int i;
                 recstream >> AWS;
                 recstream >> AWA;
             }
@@ -79,7 +76,7 @@ int main() {
                 if(secsElapsed > PRINT_DELAY) {
                     std::cout << " - Sailing by COG";
                 }
-                error = COG - setpoint;
+                error = setpoint - COG;
                 break;
             }
             case SailByAWA: {

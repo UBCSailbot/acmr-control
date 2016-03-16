@@ -25,10 +25,8 @@ int main() {
     double COG = 0;
     double HOG = 0;
     double AWS, AWA;
-    std::string test;
     clock_t tick = clock();
     clock_t tick_2 = clock();
-    double lat, lng, sog;
 
     // TODO fix magic numbers
     PID pid(0.5, 0, 0, 10, 45);

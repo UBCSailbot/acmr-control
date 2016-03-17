@@ -68,7 +68,7 @@ int main() {
 //    double error = 0;
     double dt;
     double dt_sum = 0;
-    int AWA, setpoint = 0;
+    double AWS, AWA, setpoint = 0;
 
     int tailangle; // angle of the tail wing
 //
@@ -103,9 +103,9 @@ int main() {
                 recstream >> setpoint;
             }
             else if (topic == "AW") {
-                int i;
-                recstream >> i;
+                recstream >> AWS;
                 recstream >> AWA;
+                std::cout << "AWS: " << AWS << "AWA: " << AWA << std::endl;
             }
         }
 

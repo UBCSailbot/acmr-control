@@ -105,7 +105,7 @@ int main() {
             else if (topic == "AW") {
                 recstream >> AWS;
                 recstream >> AWA;
-                std::cout << "AWS: " << AWS << "AWA: " << AWA << std::endl;
+//                std::cout << "AWS: " << AWS << "AWA: " << AWA << std::endl;
             }
         }
 

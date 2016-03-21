@@ -27,7 +27,7 @@ int main() {
     clock_t tick_2 = clock();
 
     // TODO fix magic numbers
-    PID pid(0.5, 0, 0, 10, 45);
+    PID pid(1.0, 0, 0, 10, 45);
 
 
     while(true)
@@ -80,7 +80,10 @@ int main() {
                 if(secsElapsed > PRINT_DELAY) {
                     std::cout << " - Sailing by AWA";
                 }
-                error = setpoint - AWA;
+                error = AWA - setpoint;
+                if(setpoint < 0){
+                    error = -error;
+                }
                 break;
             }
             case SailByHOG: {
@@ -88,6 +91,12 @@ int main() {
                     std::cout << " - Sailing by HOG";
                 }
                 error = setpoint - HOG;
+                break;
+            }
+            case SailByRudder: {
+                if(secsElapsed > PRINT_DELAY) {
+                    std::cout << " - Sailing by Rudder";
+                }
                 break;
             }
         }
@@ -103,14 +112,25 @@ int main() {
         //doStuffWithOutput(pid.output())
 
         if(secsElapsed > PRINT_DELAY) {
-            cout << ", RUD: " << (int) pid.Output() << ", Error: " << error;
+            if(scheme == SailByRudder){
+                cout << ", RUD: " << (int) setpoint;
+            }
+            else {
+                cout << ", RUD: " << (int) pid.Output() << ", Error: " << error;
+            }
         }
 
         // Need to continuously compute error but send data at a slower rate
         if( dt_sum > SCU_PUBLISH_PERIOD ) {
 
             dt_sum = 0;
-            std::string send_str = "RUD " + std::to_string((int)pid.Output());
+            std::string send_str;
+            if(scheme == SailByRudder){
+                send_str = "RUD " + std::to_string((int) setpoint);
+            }
+            else {
+                send_str = "RUD " + std::to_string((int) pid.Output());
+            }
             // cout << send_str << endl;
 
             handler.write(send_str);

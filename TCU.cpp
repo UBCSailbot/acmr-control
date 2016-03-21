@@ -21,15 +21,15 @@ int adjustTailWing(int scheme, int parameter, int awa)
     // implements the polar diagram for the tailwing setting from Elkaim's paper, see ENPH 459 Project Proposal, Section 16.6.2 for details
     if(abs(awa) > DONT_GO_WING_ANGLE)
     {
-        tailwing = (int)((windsign)*parameter*MAX_DEFLECTION*(180 - abs(awa))/(180.0-DONT_GO_WING_ANGLE)); // scale as the boat goes through the don't go zone
+        tailwing = (int)((windsign)*(parameter/100)*MAX_DEFLECTION*(180 - abs(awa))/(180.0-DONT_GO_WING_ANGLE)); // scale as the boat goes through the don't go zone
     }
     else if(abs(awa) > NO_GO_WIND_ANGLE)
     {
-        tailwing = windsign*parameter*MAX_DEFLECTION;
+        tailwing = windsign*(parameter/100)*MAX_DEFLECTION;
     }
     else if(abs(awa) > UPWIND_HYSTERESIS_ANGLE)
     {
-        tailwing = (int)((windsign)*parameter*MAX_DEFLECTION*(abs(awa)-UPWIND_HYSTERESIS_ANGLE)/(float(NO_GO_WIND_ANGLE-UPWIND_HYSTERESIS_ANGLE)));
+        tailwing = (int)((windsign)*(parameter/100)*MAX_DEFLECTION*(abs(awa)-UPWIND_HYSTERESIS_ANGLE)/(float(NO_GO_WIND_ANGLE-UPWIND_HYSTERESIS_ANGLE)));
     }
     else
     {
@@ -57,15 +57,10 @@ int adjustTailWing(int scheme, int parameter, int awa)
 
 int main() {
 
-
     char filter[] = "PROP_S AW";
     ZMQHandler handler(filter);
 
     int scheme = 0;
-
-
-//    double setpoint = 0;
-//    double error = 0;
     double dt;
     double dt_sum = 0;
     double AWS, AWA, setpoint = 0;
@@ -75,17 +70,14 @@ int main() {
     clock_t tick = clock();
     clock_t tick_2 = clock();
 
-    // TODO fix magic numbers
-//    PID pid(0.2, 0.1, 0.3, 5, 70);
 
     while(true)
     {
         double secsElapsed = double(clock() - tick_2) / CLOCKS_PER_SEC;
-//        std::cout << secsElapsed << std::endl;
+
         bool printed = false;
         std::string rec_str = handler.read();
 
-//        std::cout << rec_str << std::endl;
         if(rec_str.size() > 0) {
 
             stringstream recstream(rec_str);
@@ -93,7 +85,7 @@ int main() {
             std::string topic;
             recstream >> topic; // read the first string, which is the topic
 
-            if (topic == "STEER_S") {
+            if (topic == "PROP_S") {
                 int i;
 
                 recstream >> i;
@@ -114,10 +106,10 @@ int main() {
 
         if(secsElapsed > PRINT_DELAY) {
 
-            cout << "Received: " << rec_str << endl;
+//            cout << "Received: " << rec_str;
 //            std::cout << "Scheme: " << scheme << " Setpoint: " << setpoint << std::endl;
             if(scheme == ThrustPower)
-                std::cout << "Thrust %: " << setpoint << ", Tail Angle:" << tailangle << std::endl;
+                std::cout << "Thrust %: " << setpoint << ", Tail Angle:" << tailangle;
             printed = true;
         }
 
@@ -140,21 +132,24 @@ int main() {
             cout << std::endl;
         }
 
+
+
+        // Redundant lines, I think
         // Need to continuously compute error but send data at a slower rate
-        if( dt_sum > 0.1 ) {
-
-            dt_sum = 0;
-            std::string send_str = "PROP " + std::to_string(tailangle);
-            cout << tailangle << endl;
-
-            handler.write(send_str);
-        }
-
-        if(printed)
-        {
-            tick_2 = clock();
-            std::cout << std::endl;
-        }
+//        if( dt_sum > 0.1 ) {
+//
+//            dt_sum = 0;
+//            std::string send_str = "PROP " + std::to_string(tailangle);
+//            cout << tailangle << endl;
+//
+//            handler.write(send_str);
+//        }
+//
+//        if(printed)
+//        {
+//            tick_2 = clock();
+//            std::cout << std::endl;
+//        }
     }
 
     return 0;

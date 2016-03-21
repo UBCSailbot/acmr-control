@@ -48,7 +48,6 @@ int main() {
 
             if (topic == "STEER_S") {
                 int i;
-
                 recstream >> i;
                 scheme = i;
                 recstream >> setpoint;

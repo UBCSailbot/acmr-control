@@ -131,25 +131,6 @@ int main() {
             tick_2 = clock();
             cout << std::endl;
         }
-
-
-
-        // Redundant lines, I think
-        // Need to continuously compute error but send data at a slower rate
-//        if( dt_sum > 0.1 ) {
-//
-//            dt_sum = 0;
-//            std::string send_str = "PROP " + std::to_string(tailangle);
-//            cout << tailangle << endl;
-//
-//            handler.write(send_str);
-//        }
-//
-//        if(printed)
-//        {
-//            tick_2 = clock();
-//            std::cout << std::endl;
-//        }
     }
 
     return 0;

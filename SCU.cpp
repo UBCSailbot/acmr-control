@@ -72,7 +72,12 @@ int main() {
                 if(secsElapsed > PRINT_DELAY) {
                     std::cout << " - Sailing by COG";
                 }
-                error = setpoint - COG;
+                if (abs(COG - setpoint) < 180) {
+                    error = setpoint - COG;
+                }
+                else {
+                    error = COG - setpoint;
+                }
                 break;
             }
             case SailByAWA: {

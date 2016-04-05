@@ -27,7 +27,7 @@ int main() {
     clock_t tick_2 = clock();
 
     // TODO fix magic numbers
-    PID pid(1.0, 0, 0, 10, 45);
+    PID pid(1, 0, 0, 10, 45);
 
 
     while(true)
@@ -85,9 +85,9 @@ int main() {
                     std::cout << " - Sailing by AWA";
                 }
                 error = AWA - setpoint;
-                if(setpoint < 0){
-                    error = -error;
-                }
+//                if(setpoint < 0){
+//                    error = -error;
+//                }
                 break;
             }
             case SailByHOG: {
@@ -149,26 +149,5 @@ int main() {
     }
 
     return 0;
-
 }
-
-
-
-//int parse(std::string rec_str)
-//{
-//    stringstream recstream(rec_str);
-//
-//    std::string topic;
-//    recstream >> topic;
-//
-//    int scheme;
-//
-//    recstream >> scheme;
-//
-//    int error = 0;
-//
-//    return error;
-//}
-
-
 
